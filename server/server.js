@@ -6,6 +6,8 @@ dotenv.config();
 const {PORT} = require('./config/envConfig.js');
 const dbConfig = require('./config/dbConfig.js');
 
+const userRoute = require('./routes/userRoute.js');
+
 
 
 const app = express(); 
@@ -20,9 +22,7 @@ app.use(express.json());
 
 
 // routes
-app.get('/', (req, res) => {
-    res.send('Hello World!');
-});
+app.use('/api/users', userRoute);
 
 
 
