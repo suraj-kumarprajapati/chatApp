@@ -7,6 +7,7 @@ const {PORT} = require('./config/envConfig.js');
 const dbConfig = require('./config/dbConfig.js');
 
 const userRoute = require('./routes/userRoute.js');
+const chatRoute = require('./routes/chatRoute.js');
 
 
 
@@ -23,6 +24,7 @@ app.use(express.json());
 
 // routes
 app.use('/api/users', userRoute);
+app.use('/api/chats', chatRoute);
 
 
 

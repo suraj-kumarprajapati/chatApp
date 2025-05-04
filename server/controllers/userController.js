@@ -149,7 +149,7 @@ const getUserDetails = async (req, res) => {
     }
 }
 
-// get all other user details except current user
+// get all other users details except current user
 const getOtherUsers = async (req, res) => {
     const userId = req.body.id;
 
