@@ -12,6 +12,7 @@ const messageSchema = new mongoose.Schema({
     sender : {
         type : mongoose.Schema.Types.ObjectId,
         ref : "users",
+        req : true,
     },
 
     text : {
@@ -20,7 +21,7 @@ const messageSchema = new mongoose.Schema({
     },
 
     read : {
-        type : boolean,
+        type : Boolean,
         default : false,
     }
 }, {timestamps : true});

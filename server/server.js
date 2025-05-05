@@ -8,6 +8,7 @@ const dbConfig = require('./config/dbConfig.js');
 
 const userRoute = require('./routes/userRoute.js');
 const chatRoute = require('./routes/chatRoute.js');
+const messageRoute = require('./routes/messageRoute.js');
 
 
 
@@ -25,6 +26,7 @@ app.use(express.json());
 // routes
 app.use('/api/users', userRoute);
 app.use('/api/chats', chatRoute);
+app.use('/api/messages', messageRoute);
 
 
 
