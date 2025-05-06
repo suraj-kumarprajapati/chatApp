@@ -1,7 +1,7 @@
 const jwtImpl = require('../utils/jwtImpl.js');
 
 function isAuthenticated(req, res, next) {
-    const jwtToken = req.headers?.authorization?.split(' ')[1];
+    const {jwtToken} = req.cookies;
 
     if (!jwtToken) {
         res.status(401).json({

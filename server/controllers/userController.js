@@ -106,7 +106,7 @@ const login = async (req, res) => {
             httpOnly : true,
         }
 
-        res.cookie(existingUser._id + "_authToken", jwtToken, options);
+        res.cookie("jwtToken", jwtToken, options);
 
         res.status(201).json({
             success : true,
