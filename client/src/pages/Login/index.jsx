@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import {Link } from 'react-router-dom';
+import {Link, useNavigate } from 'react-router-dom';
 import { loginUser } from '../../apiCalls/auth';
 import {toast} from 'react-hot-toast';
 
@@ -10,6 +10,8 @@ const Login = () => {
     email: "",
     password: "",
   });
+
+  const navigate = useNavigate();
 
 
 
@@ -26,9 +28,10 @@ const Login = () => {
     // login api
     try {
       const response = await loginUser(user);
+     
       if(response.success) {
         toast.success(response.message);
-        window.location.href = "/";
+        navigate("/");
       }
       else {
         toast.error(response.message);

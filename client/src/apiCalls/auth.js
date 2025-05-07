@@ -4,7 +4,7 @@ import { axiosInstance } from ".";
 
 export const signupUser = async (user) => {
     try {
-        const response = await axiosInstance.post("/api/users/signup", user);
+        const response = await axiosInstance.post("/api/auth/signup", user);
         return response.data;
     }
     catch(error) {
@@ -15,10 +15,27 @@ export const signupUser = async (user) => {
 
 export const loginUser = async (user) => {
     try {
-        const response = await axiosInstance.post("/api/users/login", user);
+        const response = await axiosInstance.post("/api/auth/login", user);
         return response.data;
     }
     catch(error) {
         return error.response.data;
+    }
+}
+
+export const checkLoginStatus = async () => {
+    try {
+        const response = await axiosInstance.post("/api/auth/loginStatus");
+        const data = response.data;
+
+        if(data.success) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    catch(error) {
+        return false;
     }
 }

@@ -15,7 +15,9 @@ function isAuthenticated(req, res, next) {
         // {id : user._id, email : user.email}
         const decodedToken = jwtImpl.decodeJwtToken(jwtToken);
 
-        if(!decodedToken) {
+        const expDate = decodedToken?.exp;
+
+        if(!decodedToken || Date.now() >= expDate * 1000 ) {
             res.status(401).json({
                 success: false,
                 message: "user is not logged in",
@@ -23,12 +25,11 @@ function isAuthenticated(req, res, next) {
             return;
         }
 
-        // check the expiry token condition
-
-
-
+    
+        // sed user id in req.body
         req.body.id = decodedToken.id;
 
+        // call next middleware/controller
         next();
     }
     catch (error) {
