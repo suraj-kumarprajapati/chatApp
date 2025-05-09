@@ -4,15 +4,18 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import { Toaster } from 'react-hot-toast';
-
 import './App.css';
 import { ProtectedRoute } from './components/ProtectedRoute';
-
+import { useSelector } from 'react-redux';
+import Loader from './components/Loader';
 
 function App() {
 
+  const {loader} = useSelector((state) => state.loaderReducer);
+  
   return (
     <>
+      { loader && <Loader /> }
       <Toaster position='top-center' reverseOrder={false} />
       <BrowserRouter>
         <Routes>

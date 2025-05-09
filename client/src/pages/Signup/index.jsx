@@ -4,6 +4,8 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom';
 import { signupUser } from '../../apiCalls/auth';
 import {toast} from 'react-hot-toast';
+import { useDispatch } from 'react-redux';
+import { hideLoader, showLoader } from '../../redux/loaderSlice';
 
 const Signup = () => {
 
@@ -14,6 +16,8 @@ const Signup = () => {
     email: "",
     password: "",
   });
+
+  const dispatch = useDispatch();
 
   // submit the form 
   const submitSignupForm = async (e) => {
@@ -26,7 +30,9 @@ const Signup = () => {
 
     // signup api
     try {
+      dispatch(showLoader());
       const response = await signupUser(user);
+      dispatch(hideLoader());
 
       if(response.success) {
         toast.success(response.message);
@@ -36,6 +42,7 @@ const Signup = () => {
       }
     }  
     catch(error) {
+      dispatch(hideLoader());
       toast.error(error.message);
     }
   }

@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import {Link, useNavigate } from 'react-router-dom';
 import { loginUser } from '../../apiCalls/auth';
 import {toast} from 'react-hot-toast';
+import { hideLoader, showLoader } from '../../redux/loaderSlice';
+import { useDispatch } from 'react-redux';
 
 const Login = () => {
 
@@ -12,7 +14,7 @@ const Login = () => {
   });
 
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
 
 
    // submit the form 
@@ -27,7 +29,9 @@ const Login = () => {
 
     // login api
     try {
+      dispatch(showLoader());
       const response = await loginUser(user);
+      dispatch(hideLoader());
      
       if(response.success) {
         toast.success(response.message);
@@ -38,6 +42,7 @@ const Login = () => {
       }
     }
     catch(error) {
+      dispatch(hideLoader());
       toast.error(error.message);
     }
   }

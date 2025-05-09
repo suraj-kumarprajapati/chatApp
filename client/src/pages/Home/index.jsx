@@ -2,9 +2,17 @@
 
 import React from 'react'
 
- const Home = () => {
+const Home = () => {
   return (
-    <div>Home</div>
+    <>
+      <div className="home-page">
+        <div className="main-content">
+          {/* SIDEBAR LAYOUT  */}
+          {/* CHAT AREA LAYOUT  */}
+        </div>
+      </div>
+
+    </>
   )
 }
 

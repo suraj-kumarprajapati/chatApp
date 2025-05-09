@@ -1,26 +1,45 @@
 
 
 import React, {useEffect, useState} from 'react';
-import { checkLoginStatus } from '../apiCalls/auth';
 import { Navigate } from 'react-router-dom';
+import { getCurrentUser } from '../apiCalls/users';
+import Loader from "./Loader";
 
 export const ProtectedRoute = ({children}) => {
 
     const [isLoggedIn, setIsLoggedIn] = useState(null);
+    const [user, setUser] = useState(null);
 
-    useEffect( () => {
 
-        const getLoginStatus = async () => {
-            const status = await checkLoginStatus();
-            setIsLoggedIn(status);
+    useEffect(() => {
+        const getUserDetails = async () => {
+            const response = await getCurrentUser();
+
+            try {
+                if(response.success) {
+                    const currentUser = response.data;
+                    setUser(currentUser);
+                    setIsLoggedIn(true);
+                }
+                else {
+                    setUser(null);
+                    setIsLoggedIn(false);
+                }
+            }
+            catch(error) {
+                setUser(null);
+                setIsLoggedIn(false);
+            }
         }
 
-        getLoginStatus();
+        
+        getUserDetails();
     }, []);
 
 
+
     if(isLoggedIn == null) {
-        return <div>Loading...</div>
+        return <Loader />
     }
     else if(isLoggedIn) {
         return children;
