@@ -28,7 +28,8 @@ const Header = () => {
                     <div className="logged-user-name">
                         {getFullName()}
                     </div>
-                    <div className="logged-user-profile-pic">    {getInitials()}
+                    <div className="logged-user-profile-pic">    
+                        {getInitials()}
                     </div>
                 </div>
             </div>

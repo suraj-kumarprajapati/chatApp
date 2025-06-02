@@ -5,7 +5,7 @@ import { axiosInstance } from ".";
 
 
 // get other users
-export const getOtherUsers =  async () => {
+export const getAllUsers =  async () => {
     try {
         const response = await axiosInstance.get("api/users/otherUsers");
         return response.data;
