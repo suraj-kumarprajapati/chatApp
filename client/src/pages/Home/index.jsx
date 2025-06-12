@@ -3,10 +3,12 @@
 import React from 'react'
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
+import Chat from './components/Chat';
+import { useSelector } from 'react-redux';
 
 const Home = () => {
 
-
+  const {selectedChat} = useSelector((state) => state.userReducer);
 
 
   
@@ -20,9 +22,9 @@ const Home = () => {
           {/* SIDEBAR LAYOUT  */}
           <Sidebar />
           {/* CHAT AREA LAYOUT  */}
+          {selectedChat && <Chat />}
         </div>
       </div>
-
     </>
   )
 }

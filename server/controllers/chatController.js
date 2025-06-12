@@ -18,7 +18,7 @@ const createNewChat = async (req, res) => {
     try {
 
 
-        const existingChat1 = await Chat.findOne({members : [members[0], members[1]] });
+        const existingChat1 = await Chat.findOne({members : [members[0], members[1]] }).populate('members');
 
         if(existingChat1 ) {
             res.status(400).json({
@@ -31,12 +31,12 @@ const createNewChat = async (req, res) => {
 
 
         
-        const newChat = await Chat.create({members : members});
-
+        let newChat = await Chat.create({members : members});
+        newChat = await newChat.populate('members');
 
         res.status(201).json({
             success : true,
-            message : `chat created between ${newChat?.members[0]} and ${newChat?.members[1]}`,
+            message : `chat created between ${newChat?.members[0]._id} and ${newChat?.members[1]._id}`,
             data : newChat
         });
     }
@@ -55,7 +55,7 @@ const getAllChats = async (req, res) => {
     const userId = req.body?.id;
 
     try {
-        const allChats = await Chat.find({members : { $in : [userId] }});
+        const allChats = await Chat.find({members : { $in : [userId] }}).populate('members').sort({updatedAt : -1});
 
 
         res.status(200).json({

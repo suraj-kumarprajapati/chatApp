@@ -43,7 +43,8 @@ const sendMessage = async (req, res) => {
 
         res.status(201).json({
             success : true,
-            message : 'message sent successfully'
+            message : 'message sent successfully',
+            data : newMessage
         });
     }
     catch(error) {
