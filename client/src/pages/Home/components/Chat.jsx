@@ -1,8 +1,9 @@
 import { useDispatch, useSelector } from "react-redux";
-import { createNewMessage } from "../../../apiCalls/message";
+import { createNewMessage, fetchAllMessages } from "../../../apiCalls/message";
 import { toast } from "react-hot-toast";
 import { showLoader, hideLoader } from "../../../redux/loaderSlice.js"
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import moment from "moment";
 
 
 const Chat = () => {
@@ -11,12 +12,30 @@ const Chat = () => {
     const dispatch = useDispatch();
     const selectedUser = selectedChat?.members.find((u) => u._id !== currentUser._id);
     const [messageText, setMessageText] = useState('');
+    const [allMessages, setAllMessages] = useState([]);
+    const [lastSentMessage, setLastSentMessage] = useState({});
 
     // returns the full name of the user
     const getFullName = (u) => {
         const { firstName, lastName } = u;
         const fullName = firstName + " " + lastName;
         return fullName.toUpperCase();
+    }
+
+    // format the time
+    const formatTime = (timeStamp) => {
+        const now = moment();
+        const diff = now.diff(moment(timeStamp), 'days');
+
+        if(diff < 1) {
+            return `Today ${moment(timeStamp).format('hh:mm A')}`;
+        }
+        else if(diff < 2) {
+            return `Yesterday ${moment(timeStamp).format('hh:mm A')}`;
+        }
+        else {
+            return `${moment(timeStamp).format('MMM, D hh:mm A')}`;
+        }
     }
 
 
@@ -28,12 +47,12 @@ const Chat = () => {
             text: messageText
         }
 
-        dispatch(showLoader());
+        // dispatch(showLoader());
         try {
             const response = await createNewMessage(message);
             if (response.success) {
-                // const respData = response.data;
-                toast.success(response.message)
+                setLastSentMessage({...response.data});
+                // toast.success(response.message)
                 setMessageText('');
             }
             else {
@@ -43,8 +62,33 @@ const Chat = () => {
         catch (error) {
             toast.error(error.message);
         }
-        dispatch(hideLoader());
+        // dispatch(hideLoader());
     }
+
+
+    // fetch all messages of a chat
+    useEffect(() => {
+        const getAllMessages = async () => {
+            // dispatch(showLoader());
+            try {
+                const response = await fetchAllMessages(selectedChat._id);
+                if (response.success) {
+                    setAllMessages(response.data);
+                    // toast.success(response.message)
+                }
+                else {
+                    toast.error(response.message);
+                }
+            }
+            catch (error) {
+                toast.error(error.message);
+            }
+            // dispatch(hideLoader());
+        }
+
+        getAllMessages();
+    }, [lastSentMessage, selectedChat, dispatch]);
+
 
 
 
@@ -61,19 +105,47 @@ const Chat = () => {
                         </div>
                         <div className="main-chat-area">
                             {/* chat area  */}
-                            CHAT AREA
+                            {
+                                allMessages.map((msg, ind) => {
+                                    const isSender = msg.sender === currentUser._id;
+
+                                    return (
+                                        <div 
+                                            className="message-container"  
+                                            key={ind} 
+                                            style={{justifyContent : isSender ? "end" : "start"}}
+                                        >
+                                            <div>
+                                                <div 
+                                                    className={isSender ? "send-message" : "received-message"} 
+                                                >
+                                                    {msg.text}
+                                                </div>
+
+                                                <div 
+                                                    className={"message-timestamp"}
+                                                    style={{float : isSender ? "right" : "left"}}
+                                                >
+                                                    {formatTime(msg.createdAt)}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )
+                                })
+                            }
+
                         </div>
                         <div className="send-message-div">
                             {/* send message */}
-                            <input 
-                                type="text" 
-                                className="send-message-input" 
-                                placeholder="Type a message" 
+                            <input
+                                type="text"
+                                className="send-message-input"
+                                placeholder="Type a message"
                                 onChange={e => setMessageText(e.target.value)}
                                 value={messageText}
                             />
-                            <button 
-                                className="fa fa-paper-plane send-message-btn" 
+                            <button
+                                className="fa fa-paper-plane send-message-btn"
                                 aria-hidden="true"
                                 onClick={sendMessage}
                             >

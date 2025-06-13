@@ -13,3 +13,14 @@ export const createNewMessage =  async (message) => {
         return error.response.data;
     }
 }
+
+// fetch all messages
+export const fetchAllMessages =  async (chatId) => {
+    try {
+        const response = await axiosInstance.get(`api/messages/allMessages/${chatId}`);
+        return response.data;
+    }
+    catch(error) {
+        return error.response.data;
+    }
+}
