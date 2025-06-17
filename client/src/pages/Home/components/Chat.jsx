@@ -1,14 +1,14 @@
 import { useDispatch, useSelector } from "react-redux";
 import { createNewMessage, fetchAllMessages } from "../../../apiCalls/message";
 import { toast } from "react-hot-toast";
-import { showLoader, hideLoader } from "../../../redux/loaderSlice.js"
 import { useEffect, useState } from "react";
 import moment from "moment";
+import { clearUnread } from "../../../apiCalls/chat.js";
 
 
 const Chat = () => {
 
-    const { selectedChat, user: currentUser } = useSelector(state => state.userReducer);
+    const { selectedChat, user: currentUser, allChats} = useSelector(state => state.userReducer);
     const dispatch = useDispatch();
     const selectedUser = selectedChat?.members.find((u) => u._id !== currentUser._id);
     const [messageText, setMessageText] = useState('');
@@ -47,12 +47,10 @@ const Chat = () => {
             text: messageText
         }
 
-        // dispatch(showLoader());
         try {
             const response = await createNewMessage(message);
             if (response.success) {
                 setLastSentMessage({...response.data});
-                // toast.success(response.message)
                 setMessageText('');
             }
             else {
@@ -62,14 +60,12 @@ const Chat = () => {
         catch (error) {
             toast.error(error.message);
         }
-        // dispatch(hideLoader());
     }
 
 
     // fetch all messages of a chat
     useEffect(() => {
         const getAllMessages = async () => {
-            // dispatch(showLoader());
             try {
                 const response = await fetchAllMessages(selectedChat._id);
                 if (response.success) {
@@ -83,11 +79,41 @@ const Chat = () => {
             catch (error) {
                 toast.error(error.message);
             }
-            // dispatch(hideLoader());
         }
 
         getAllMessages();
     }, [lastSentMessage, selectedChat, dispatch]);
+
+
+    // clear unread messges
+    useEffect(() => {
+        const clearUnreadMsg = async () => {
+            try {
+                const response = await clearUnread(selectedChat._id);
+                if (response.success) {
+                    const updatedChat = response.data;
+                    // update allChats with updated selected chat
+                    allChats.map((chat) => {
+                        return chat._id === selectedChat._id ? updatedChat : chat;
+                    });
+                    // toast.success(response.message)
+                }
+                else {
+                    toast.error(response.message);
+                }
+            }
+            catch (error) {
+                toast.error(error.message);
+            }
+        }
+
+        
+        clearUnreadMsg();
+    }, [selectedChat, dispatch, allChats]);
+
+
+    
+
 
 
 
@@ -122,11 +148,20 @@ const Chat = () => {
                                                     {msg.text}
                                                 </div>
 
+                                                
+
                                                 <div 
                                                     className={"message-timestamp"}
                                                     style={{float : isSender ? "right" : "left"}}
                                                 >
                                                     {formatTime(msg.createdAt)}
+                                                    {
+                                                        (isSender && msg.read) && <span style={{color : "green", opacity : "100%", fontWeight : "bolder"}}><i className="fa-solid fa-check-double"></i> </span> 
+                                                        || (isSender && <span><i className="fa-solid fa-check-double"></i></span>)
+                                                    }
+                                                    {
+                                                        
+                                                    }
                                                 </div>
                                             </div>
                                         </div>

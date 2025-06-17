@@ -509,6 +509,40 @@ i{
   opacity: 50%;
 }
 
+.last-message-timestamp {
+  font-size: 13px;
+  opacity : 80%;
+
+}
+
+.chat-meta-data {
+  display :flex;
+  flex-direction : row;
+  align-items : center;
+}
+
+.unread-msg-cnt {
+  font-size: 13px;
+  opacity : 80%;
+  background-color: green;
+  width : 25px;
+  height : 25px;
+  margin-right : 10px;
+  text-align: center;
+  padding : 5px 10px;
+  border-radius: 50%;
+  color : white;
+}
+
+.unread-msg-cnt-zero {
+  display : none;
+}
+
+.unread-msg-cnt p {
+  vertical-align : center;
+  line-height : 13px;
+}
+
 
 
 /*****************************************************
@@ -529,3 +563,4 @@ i{
         width: 85%
     }
 }
+
