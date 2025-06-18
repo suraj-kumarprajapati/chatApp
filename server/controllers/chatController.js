@@ -78,7 +78,8 @@ const getAllChats = async (req, res) => {
 
 // clear unread messages of a chat
 const clearUnreadMessages = async (req, res) => {
-    const {chatId} = req.body;
+    const {chatId, id : currentUserId} = req.body;
+
 
     if(!chatId) {
         res.status(400).json({
@@ -99,16 +100,21 @@ const clearUnreadMessages = async (req, res) => {
             return;
         }
 
+
+        // update the read property to true in message collection
+        const updatedMessages = await Message.updateMany({chatId : chatId, read : false, sender : {$ne : currentUserId}}, {read : true} );
+
+        // modified messages count
+        const modifiedMessagesCount = updatedMessages.modifiedCount;
+
         // update the unread message count in chat collection
         const updatedChat = await Chat.findByIdAndUpdate(
             chatId, 
-            {unreadMessageCount : 0 }, 
+            { $inc : {unreadMessageCount : -modifiedMessagesCount} }, 
             {new : true}
         ).populate("members").populate("lastMessage");
 
-        // update the read property to true in message collection
-        const updatedMessages = await Message.updateMany({chatId : chatId, read : false}, {read : true} );
-
+        // send the response
         res.status(200).json({
             message: "Unread message cleared successfully",
             success: true,
@@ -123,6 +129,8 @@ const clearUnreadMessages = async (req, res) => {
         });
     }
 }
+
+
 
 
 

@@ -6,14 +6,15 @@ import moment from "moment";
 import { clearUnread } from "../../../apiCalls/chat.js";
 
 
-const Chat = () => {
+
+
+const Chat = ({socket}) => {
 
     const { selectedChat, user: currentUser, allChats} = useSelector(state => state.userReducer);
     const dispatch = useDispatch();
     const selectedUser = selectedChat?.members.find((u) => u._id !== currentUser._id);
     const [messageText, setMessageText] = useState('');
     const [allMessages, setAllMessages] = useState([]);
-    const [lastSentMessage, setLastSentMessage] = useState({});
 
     // returns the full name of the user
     const getFullName = (u) => {
@@ -48,9 +49,19 @@ const Chat = () => {
         }
 
         try {
+
+            // emit a message using socket
+            const socketMessageData = {
+                ...message,
+                members : selectedChat.members.map(m => m._id),
+                read : false,
+                createdAt : moment().format("YYYY-MM-DD hh:mm:ss"),
+            }
+            
+            socket.emit('send-message', socketMessageData)
+
             const response = await createNewMessage(message);
             if (response.success) {
-                setLastSentMessage({...response.data});
                 setMessageText('');
             }
             else {
@@ -81,8 +92,16 @@ const Chat = () => {
             }
         }
 
+
+
+
+        socket.off('receive-message').on("receive-message", message => {
+            getAllMessages();
+            console.log(message);
+        })
+
         getAllMessages();
-    }, [lastSentMessage, selectedChat, dispatch]);
+    }, [selectedChat, dispatch, socket]);
 
 
     // clear unread messges
@@ -112,6 +131,12 @@ const Chat = () => {
     }, [selectedChat, dispatch, allChats]);
 
 
+    // automatically scroll down on incoming message
+    useEffect(() => {
+        const msgContaniner = document.getElementById('msg-container');
+        msgContaniner.scrollTop = msgContaniner.scrollHeight;
+    }, [allMessages]);
+
     
 
 
@@ -124,12 +149,12 @@ const Chat = () => {
             {
                 selectedChat &&
                 (
-                    <div className="app-chat-area">
+                    <div className="app-chat-area"  id="msg-container">
                         <div className="app-chat-area-header">
                             {/* receiver data  */}
                             {selectedUser && getFullName(selectedUser)}
                         </div>
-                        <div className="main-chat-area">
+                        <div className="main-chat-area" >
                             {/* chat area  */}
                             {
                                 allMessages.map((msg, ind) => {
@@ -154,14 +179,15 @@ const Chat = () => {
                                                     className={"message-timestamp"}
                                                     style={{float : isSender ? "right" : "left"}}
                                                 >
+                                                    {/* time info */}
                                                     {formatTime(msg.createdAt)}
+                                                    
+                                                    {/* chat seen info */}
                                                     {
-                                                        (isSender && msg.read) && <span style={{color : "green", opacity : "100%", fontWeight : "bolder"}}><i className="fa-solid fa-check-double"></i> </span> 
-                                                        || (isSender && <span><i className="fa-solid fa-check-double"></i></span>)
+                                                        (isSender && msg.read) && <span className="seen-msg"><i className="fa-solid fa-check-double"></i> </span> 
+                                                        || (isSender && <span className="unseen-msg"><i className="fa-solid fa-check-double"></i></span>)
                                                     }
-                                                    {
-                                                        
-                                                    }
+                                                   
                                                 </div>
                                             </div>
                                         </div>

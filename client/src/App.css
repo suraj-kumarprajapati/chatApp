@@ -527,7 +527,7 @@ i{
   background-color: green;
   width : 25px;
   height : 25px;
-  margin-right : 10px;
+  margin-left : 10px;
   text-align: center;
   padding : 5px 10px;
   border-radius: 50%;
@@ -541,6 +541,17 @@ i{
 .unread-msg-cnt p {
   vertical-align : center;
   line-height : 13px;
+}
+
+.seen-msg {
+  color : green;
+  opacity : 100%;
+  font-weight : bolder;
+}
+
+.unseen-msg {
+  color :gray;
+  opacity : 90%;
 }
 
 

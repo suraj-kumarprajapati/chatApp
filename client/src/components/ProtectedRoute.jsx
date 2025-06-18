@@ -18,8 +18,6 @@ export const ProtectedRoute = ({children}) => {
     // get current user details
     useEffect(() => {
         const getUserDetails = async () => {
-            
-
             try {
                 const response = await getCurrentUser();
                 if(response.success) {
@@ -48,8 +46,6 @@ export const ProtectedRoute = ({children}) => {
     // get all users
     useEffect(() => {
         const getAllUserDetails = async () => {
-            
-
             try {
                 const response = await getAllUsers();
                 if(response.success) {
@@ -79,8 +75,6 @@ export const ProtectedRoute = ({children}) => {
     // get all chats
     useEffect(() => {
         const getAllChatsDetails = async () => {
-            
-
             try {
                 const response = await getAllChats();
                 if(response.success) {

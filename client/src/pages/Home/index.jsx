@@ -6,13 +6,25 @@ import Sidebar from './components/Sidebar';
 import Chat from './components/Chat';
 import { useSelector } from 'react-redux';
 import {io} from "socket.io-client";
+import { useEffect } from 'react';
+
+// make the socket connection to the server
+const socket = io("http://localhost:3000");
 
 const Home = () => {
 
-  const {selectedChat} = useSelector((state) => state.userReducer);
+  const {selectedChat, user} = useSelector((state) => state.userReducer);
+
+  // handle socket events
+  useEffect(() => {
+
+    if(user) {
+      socket.emit("join-room", user._id);
+    }
+    
+  }, [user]);
 
 
-  const socket = io("http://localhost:3000");
   
   return (
     <>
@@ -24,7 +36,7 @@ const Home = () => {
           {/* SIDEBAR LAYOUT  */}
           <Sidebar />
           {/* CHAT AREA LAYOUT  */}
-          {selectedChat && <Chat />}
+          {selectedChat && <Chat socket={socket} />}
         </div>
       </div>
     </>

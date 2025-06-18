@@ -147,11 +147,13 @@ const UsersList = ({ searchKey }) => {
 
                                 {/* unread count and time stamp of last message  */}
                                 <div className="chat-meta-data">
-                                    <div className={getUnreadMsgCount(user._id) == 0 ? "unread-msg-cnt-zero" : "unread-msg-cnt"}>
-                                        <p>{getUnreadMsgCount(user._id) + " "}</p>
-                                    </div>
+                                   
                                     <div className="last-message-timestamp">
                                         {getLastMsgTimeStamp(user._id)}
+                                    </div>
+
+                                     <div className={getUnreadMsgCount(user._id) == 0 ? "unread-msg-cnt-zero" : "unread-msg-cnt"}>
+                                        <p>{getUnreadMsgCount(user._id) + " "}</p>
                                     </div>
                                 </div>
 

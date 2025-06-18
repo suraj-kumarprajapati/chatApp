@@ -20,16 +20,19 @@ const app = express();
 
 
 // middlewares
-app.use(cors({
-  origin: 'http://localhost:5173',
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true
-}));
+// app.use(cors({
+//   origin: 'http://localhost:5173',
+//   methods: ['GET', 'POST', 'PUT', 'DELETE'],
+//   credentials: true
+// }));
+
 
 app.use(express.json()); 
 app.use(cookieParser());
 
 
+
+// socket io
 const server = require('http').createServer(app);
 const io = require('socket.io')(server, {
     cors : {
@@ -40,9 +43,6 @@ const io = require('socket.io')(server, {
 
 
 
-
-
-
 // routes
 app.use('/api/auth', authRoute);
 app.use('/api/users', userRoute);
@@ -50,12 +50,24 @@ app.use('/api/chats', chatRoute);
 app.use('/api/messages', messageRoute);
 
 
-// test socket connection from client
+// test socket connection and handle socket events from client
 io.on('connection', socket => {
     console.log('connection with socket id : ' + socket.id);
+
+    socket.on('join-room', userId => {
+        socket.join(userId);
+    });
+
+    socket.on("send-message", message => {
+        io.to(message.members[0])
+            .to(message.members[1])
+            .emit('receive-message', message);
+    })
 })
 
 
+
+// lister to server at PORT
 server.listen(PORT, () => {
     console.log('Server is running on port', PORT); 
 });
