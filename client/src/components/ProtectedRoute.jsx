@@ -54,13 +54,11 @@ export const ProtectedRoute = ({children}) => {
                     setIsLoggedIn(true);
                 }
                 else {
-                    toast.error(response.message);
                     dispatch(setAllUsers([]));
                     setIsLoggedIn(false);
                 }
             }
             catch(error) {
-                toast.error(error.message);
                 dispatch(setAllUsers([]));
                 setIsLoggedIn(false);
             }
@@ -83,13 +81,11 @@ export const ProtectedRoute = ({children}) => {
                     setIsLoggedIn(true);
                 }
                 else {
-                    toast.error(response.message);
                     dispatch(setAllChats([]));
                     setIsLoggedIn(false);
                 }
             }
             catch(error) {
-                toast.error(error.message);
                 dispatch(setAllChats([]));
                 setIsLoggedIn(false);
             }

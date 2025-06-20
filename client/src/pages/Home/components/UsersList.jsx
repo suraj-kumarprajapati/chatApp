@@ -1,15 +1,15 @@
 import { useDispatch, useSelector } from "react-redux";
 import { createNewChat } from "../../../apiCalls/chat";
 import { toast } from 'react-hot-toast';
-import { showLoader, hideLoader } from '../../../redux/loaderSlice.js';
 import { setAllChats, setSelectedChat } from "../../../redux/userSlice";
+import { getAllChats } from "../../../apiCalls/chat";
 import moment from "moment";
+import { useEffect } from "react";
 
 
 
 
-
-const UsersList = ({ searchKey }) => {
+const UsersList = ({ searchKey, socket }) => {
 
     // get all user details from state
     const { allUsers, allChats, user: currentUser, selectedChat } = useSelector((state) => state.userReducer);
@@ -38,7 +38,6 @@ const UsersList = ({ searchKey }) => {
     // method to start a new chat
     const startNewChat = async (searchedUserId) => {
         try {
-            dispatch(showLoader());
             const response = await createNewChat([currentUser._id, searchedUserId]);
             if (response.success) {
                 toast.success(response.message);
@@ -49,14 +48,9 @@ const UsersList = ({ searchKey }) => {
                 // find the updated chat and select it or open it
                 dispatch(setSelectedChat(newChat));
             }
-            else {
-                toast.error(response.message);
-            }
-            dispatch(hideLoader());
         }
         catch (error) {
             toast.error(error.message);
-            dispatch(hideLoader());
         }
     }
 
@@ -93,8 +87,7 @@ const UsersList = ({ searchKey }) => {
             return 0;
         }
 
-        return chat.unreadMessageCount
-            ;
+        return chat.unreadMessageCount;
     }
 
 
@@ -110,6 +103,46 @@ const UsersList = ({ searchKey }) => {
                 );
         })
     }
+
+
+    // handle socket event
+    useEffect(() => {
+
+         const getAllChatsDetails = async () => {
+            try {
+                const response = await getAllChats();
+                if(response.success) {
+                    const allChats = response.data;
+                    dispatch(setAllChats(allChats));
+                }
+            }
+            catch(error) {
+                toast.error("cannot fetch latest data");
+            }
+        }
+
+
+        // initial fetch
+        getAllChatsDetails();
+
+        const handleReceivedMessageEvent = (message) => {
+            getAllChatsDetails();
+            // find selected chat
+            console.log(message);
+            if(selectedChat) {
+                const newSelectedChat = allChats.find((ch) => ch._id === selectedChat._id);
+                dispatch(setSelectedChat(newSelectedChat));
+            }
+        }
+
+        if(socket)  
+            socket.on("receive-message", handleReceivedMessageEvent);
+
+        return () => {
+            if(socket) socket.off("receive-message");
+        }
+    }, [socket, dispatch, allChats, selectedChat]);
+
 
 
     return (
@@ -152,8 +185,8 @@ const UsersList = ({ searchKey }) => {
                                         {getLastMsgTimeStamp(user._id)}
                                     </div>
 
-                                     <div className={getUnreadMsgCount(user._id) == 0 ? "unread-msg-cnt-zero" : "unread-msg-cnt"}>
-                                        <p>{getUnreadMsgCount(user._id) + " "}</p>
+                                     <div className={getUnreadMsgCount(user._id) == 0 ? "unread-msg-cnt-zero" : "unread-msg-cnt"}  style={  selectedChatContainsUser(user) ? {   display : "none"} : {}}  >
+                                        <p>{getUnreadMsgCount(user._id )  + " "}</p>
                                     </div>
                                 </div>
 

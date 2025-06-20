@@ -4,6 +4,7 @@ import { toast } from "react-hot-toast";
 import { useEffect, useState } from "react";
 import moment from "moment";
 import { clearUnread } from "../../../apiCalls/chat.js";
+import { setSelectedChat } from "../../../redux/userSlice.js";
 
 
 
@@ -76,12 +77,12 @@ const Chat = ({socket}) => {
 
     // fetch all messages of a chat
     useEffect(() => {
+        // get all messages
         const getAllMessages = async () => {
             try {
                 const response = await fetchAllMessages(selectedChat._id);
                 if (response.success) {
                     setAllMessages(response.data);
-                    // toast.success(response.message)
                 }
                 else {
                     toast.error(response.message);
@@ -94,14 +95,27 @@ const Chat = ({socket}) => {
 
 
 
-
-        socket.off('receive-message').on("receive-message", message => {
-            getAllMessages();
-            console.log(message);
-        })
-
+        // Initial fetch
         getAllMessages();
-    }, [selectedChat, dispatch, socket]);
+        
+
+
+        // handle the incoming message
+        const handleReceivedMessage = (message) => {
+            getAllMessages();
+            // find selected chat
+            if(selectedChat) {
+                const newSelectedChat = allChats.find((ch) => ch._id === selectedChat._id);
+                dispatch(setSelectedChat(newSelectedChat));
+            }
+        }
+
+        socket.on("receive-message", handleReceivedMessage);
+
+        return () => {
+            socket.off('receive-message');
+        }
+    }, [selectedChat, dispatch, socket, allChats]);
 
 
     // clear unread messges
@@ -126,19 +140,26 @@ const Chat = ({socket}) => {
             }
         }
 
-        
         clearUnreadMsg();
     }, [selectedChat, dispatch, allChats]);
 
 
     // automatically scroll down on incoming message
     useEffect(() => {
-        const msgContaniner = document.getElementById('msg-container');
-        msgContaniner.scrollTop = msgContaniner.scrollHeight;
-    }, [allMessages]);
+        const msgContainer = document.getElementById('msg-container');
+        msgContainer.scrollTo({
+            top: msgContainer.scrollHeight,
+            behavior: 'smooth'
+        });
+       
+    }, [allMessages, selectedChat]);    
 
-    
-
+    // send message on pressing enter 
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter' && messageText.trim()) {
+            sendMessage();
+        }
+    };
 
 
 
@@ -149,12 +170,12 @@ const Chat = ({socket}) => {
             {
                 selectedChat &&
                 (
-                    <div className="app-chat-area"  id="msg-container">
+                    <div className="app-chat-area"  >
                         <div className="app-chat-area-header">
                             {/* receiver data  */}
                             {selectedUser && getFullName(selectedUser)}
                         </div>
-                        <div className="main-chat-area" >
+                        <div className="main-chat-area"  id="msg-container" >
                             {/* chat area  */}
                             {
                                 allMessages.map((msg, ind) => {
@@ -204,6 +225,8 @@ const Chat = ({socket}) => {
                                 placeholder="Type a message"
                                 onChange={e => setMessageText(e.target.value)}
                                 value={messageText}
+                                onKeyDown={handleKeyDown}
+
                             />
                             <button
                                 className="fa fa-paper-plane send-message-btn"
