@@ -128,7 +128,7 @@ const UsersList = ({ searchKey, socket }) => {
         const handleReceivedMessageEvent = (message) => {
             getAllChatsDetails();
             // find selected chat
-            console.log(message);
+            
             if(selectedChat) {
                 const newSelectedChat = allChats.find((ch) => ch._id === selectedChat._id);
                 dispatch(setSelectedChat(newSelectedChat));
@@ -181,6 +181,7 @@ const UsersList = ({ searchKey, socket }) => {
                                 {/* unread count and time stamp of last message  */}
                                 <div className="chat-meta-data">
                                    
+                                    {/* time stamp  */}
                                     <div className="last-message-timestamp">
                                         {getLastMsgTimeStamp(user._id)}
                                     </div>

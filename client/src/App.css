@@ -421,8 +421,10 @@ i{
 }
 
 .send-message-div{
-   margin-top:20px;
-    position: relative;
+  margin-top:20px;
+  position: relative;
+  /* display : flex;
+  flex-direction: column; */
 }
 
 .send-message-input{
@@ -438,6 +440,17 @@ i{
 .send-message-btn{
     position: absolute;
     right: 10px;
+    font-size: 25px;
+    color: #e74c3c;
+    cursor: pointer;
+    border : none;
+    background-color: transparent;
+    margin-top:5px;
+}
+
+.emoji-button {
+  position: absolute;
+    right: 50px;
     font-size: 25px;
     color: #e74c3c;
     cursor: pointer;
@@ -561,9 +574,14 @@ i{
 ******************************************************/
 
 @media only screen and (max-width: 1000px) {
-    .filter-user-details {
+    .filter-user-details  {
       display: none;
     }
+
+    .last-message-timestamp {
+      display : none;
+    }
+
     .user-search-area {
         display: none;
     }
@@ -573,5 +591,12 @@ i{
     .app-chat-area{
         width: 85%
     }
+}
+
+
+/* typing indicator */
+.typing-indicator  {
+  font-size: 14px;
+  color : green;
 }
 

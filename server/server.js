@@ -62,7 +62,13 @@ io.on('connection', socket => {
         io.to(message.members[0])
             .to(message.members[1])
             .emit('receive-message', message);
-    })
+    });
+
+    socket.on('user-typing', data => {
+        io.to(data.members[0])
+            .to(data.members[1])
+            .emit('user-typing-status', data);
+    });
 })
 
 
