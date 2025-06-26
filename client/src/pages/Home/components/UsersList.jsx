@@ -23,6 +23,7 @@ const UsersList = ({ searchKey, socket }) => {
 
         if (chat) {
             dispatch(setSelectedChat(chat));
+            socket.emit('new-selected-chat', chat);
         }
     }
 
@@ -47,6 +48,7 @@ const UsersList = ({ searchKey, socket }) => {
 
                 // find the updated chat and select it or open it
                 dispatch(setSelectedChat(newChat));
+                
             }
         }
         catch (error) {

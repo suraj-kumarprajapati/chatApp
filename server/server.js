@@ -69,6 +69,10 @@ io.on('connection', socket => {
             .to(data.members[1])
             .emit('user-typing-status', data);
     });
+
+    socket.on('new-selected-chat', chat => {
+        io.to(chat.members[0]._id).to(chat.members[1]._id).emit('new-selected-chat-status', chat);
+    })
 })
 
 

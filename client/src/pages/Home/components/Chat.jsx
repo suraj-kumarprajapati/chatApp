@@ -78,7 +78,7 @@ const Chat = ({ socket }) => {
     }
 
 
-    // fetch all messages once in the beginning
+    // fetch all messages 
     useEffect(() => {
         // get all messages
         const getAllMessages = async () => {
@@ -96,7 +96,7 @@ const Chat = ({ socket }) => {
             }
         }
 
-        // Initial fetch
+        // fetch
         getAllMessages();
     }, [selectedChat]);
 
@@ -178,7 +178,6 @@ const Chat = ({ socket }) => {
                     allChats.map((chat) => {
                         return chat._id === selectedChat._id ? updatedChat : chat;
                     });
-                    // toast.success(response.message)
                 }
                 else {
                     toast.error(response.message);
@@ -204,7 +203,38 @@ const Chat = ({ socket }) => {
     }, [allMessages, selectedChat]);
 
 
+    // listen to new selected chat even
+    useEffect( () => {
 
+        // get all messages
+        const getAllMessages = async () => {
+            try {
+                const response = await fetchAllMessages(selectedChat._id);
+                if (response.success) {
+                    setAllMessages(response.data);
+                }
+                else {
+                    toast.error(response.message);
+                }
+            }
+            catch (error) {
+                toast.error(error.message);
+            }
+        }
+
+        const handleNewSelectedChatEvent = (chat) => {
+            const members = chat.members.map(m => m._id);
+            if(members.includes(currentUser._id)) {
+                getAllMessages();
+            }
+        }
+
+        socket.on('new-selected-chat-status', handleNewSelectedChatEvent);
+
+        return () => {
+            socket.off('new-selected-chat-status');
+        }
+    }, [socket, currentUser]);
 
 
 
