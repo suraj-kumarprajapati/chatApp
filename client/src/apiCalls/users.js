@@ -25,3 +25,15 @@ export const getCurrentUser =  async () => {
         return error.response.data;
     }
 }
+
+
+// upload profile pic
+export const uploadProfilePic =  async (image) => {
+    try {
+        const response = await axiosInstance.post("api/users/upload-profile", {image});
+        return response.data;
+    }
+    catch(error) {
+        return error.response.data;
+    }
+}

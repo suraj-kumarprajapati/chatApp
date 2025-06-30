@@ -30,9 +30,14 @@ const Header = () => {
                     <div className="logged-user-name">
                         {getFullName()}
                     </div>
-                    <div className="logged-user-profile-pic" onClick={() => navigate('/profile')} >    
-                        {getInitials()}
-                    </div>
+
+                    {user?.profilePic && <img alt="profile-pic" src={user?.profilePic} className="logged-user-profile-pic"   onClick={() => navigate('/profile')}></img>}
+
+                    {   !user?.profilePic && 
+                        <div className="logged-user-profile-pic" onClick={() => navigate('/profile')} >    
+                            {getInitials()}
+                        </div>
+                    }
                 </div>
             </div>
         </>

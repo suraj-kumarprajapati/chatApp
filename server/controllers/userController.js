@@ -1,4 +1,6 @@
 const User = require('../models/userModel.js');
+const cloudinary = require('../config/cloudinaryConfig.js');
+const {CLOUDINARY_FOLDER_NAME} = require('../config/envConfig.js');
 
 
 
@@ -53,6 +55,48 @@ const getOtherUsers = async (req, res) => {
 }
 
 
+const uploadProfilePic = async (req, res) => {
+
+    const {id : userId, image} = req.body;
+   
+    if(!image) {
+        res.status(400).json({
+            success : false,
+            message : "Profile Image Not Provided",
+        });
+        return;
+    }
+
+    try {
+
+        // upload the image to the cloudinary first
+        const uploadedImage = await cloudinary.uploader.upload(image, {
+            folder : CLOUDINARY_FOLDER_NAME,
+        });
+
+        // save the url to the mongodb db
+        const updatedUser = await User.findByIdAndUpdate({_id : userId}, 
+            {profilePic : uploadedImage.secure_url}, 
+            {new : true}
+        );
+
+
+        res.status(200).json({
+            success : true,
+            message : "Profile Pic Updated Successfully",
+            data : updatedUser,
+        });
+    }
+    catch (error) {
+        res.status(400).json({
+            success : false,
+            message : error.message,
+            error : error
+        });
+    }
+
+}
+
 
 
 
@@ -60,4 +104,5 @@ const getOtherUsers = async (req, res) => {
 module.exports = {
     getUserDetails,
     getOtherUsers,
+    uploadProfilePic,
 }

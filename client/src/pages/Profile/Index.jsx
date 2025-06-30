@@ -1,7 +1,9 @@
 import moment from "moment";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
-
+import {uploadProfilePic} from "../../apiCalls/users.js";
+import { setUser } from "../../redux/userSlice.js";
+import toast from 'react-hot-toast';
 
 
 
@@ -9,6 +11,7 @@ const Profile = () => {
 
     const {user} = useSelector(state => state.userReducer);
     const [profileImage, setProfileImage] = useState(user?.profilePic || '');
+    const dispatch = useDispatch();
 
 
     
@@ -24,12 +27,38 @@ const Profile = () => {
         return f+l;
     }
 
+    // converts the image to base64 and set it to profileImage
     const handleImageUpload = async (e) => {
         const imageFile = e.target.files[0];
+
+        if(!imageFile)
+            return;
+
         const reader = new FileReader();
-        reader.readAsDataURL(imageFile);
         reader.onloadend = async () => {
             setProfileImage(reader.result);
+        }
+
+        reader.readAsDataURL(imageFile);
+    }
+
+    // upload user profile
+    const uplaodProfile = async () => {
+        try {
+            console.log(profileImage);
+            const response = await uploadProfilePic(profileImage);
+
+            if(response.success) {
+                const updatedUserData = response.data;
+                toast.success(response.message);
+                dispatch(setUser(updatedUserData));
+            }
+            else {
+                toast.error(response.message);
+            }
+        }
+        catch (error) {
+            toast.error(error.message);
         }
     }
 
@@ -65,6 +94,11 @@ const Profile = () => {
                     </div>
                     <div className="select-profile-pic-container"   onChange={ handleImageUpload }>
                         <input type="file" />
+                    </div>
+                    <div>
+                        <button onClick={uplaodProfile}>
+                            Upload
+                        </button>
                     </div>
                 </div>
             </div>
