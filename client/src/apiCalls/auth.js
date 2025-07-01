@@ -39,3 +39,13 @@ export const checkLoginStatus = async () => {
         return false;
     }
 }
+
+export const logout = async () => {
+    try {
+        const response = await axiosInstance.post("/api/auth/logout");
+        return response.data;
+    }
+    catch (error) {
+        return error.response.data;
+    }
+}

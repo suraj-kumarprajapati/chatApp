@@ -28,6 +28,12 @@ const userSchema = new mongoose.Schema({
     profilePic : {
         type : String,
         required : false,
+    }, 
+
+    proflePicCount : {
+        type : Number,
+        required : false,
+        default : 0,
     }
 }, {timestamps : true});
 

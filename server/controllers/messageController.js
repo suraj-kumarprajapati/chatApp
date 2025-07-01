@@ -6,9 +6,18 @@ const Message = require('../models/messageModel.js');
 
 // send message
 const sendMessage = async (req, res) => {
-    const {chatId, sender, text} = req.body;
+    const {chatId, sender, text, image} = req.body;
 
-    if(!chatId || !sender || !text)  {
+
+    if(!text && !image) {
+        res.status(400).json({
+            success : false,
+            message : "no message to be sent"
+        });
+        return;
+    }
+
+    if(!chatId || !sender )  {
         res.status(400).json({
             success : false,
             message : "message could not be sent",
@@ -33,6 +42,7 @@ const sendMessage = async (req, res) => {
             chatId : chatId,
             sender : sender,
             text : text,
+            image : image,
         });
 
         // update this Chat's lastMessage and unreadMessageCount

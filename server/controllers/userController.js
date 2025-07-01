@@ -1,6 +1,6 @@
 const User = require('../models/userModel.js');
 const cloudinary = require('../config/cloudinaryConfig.js');
-const {CLOUDINARY_FOLDER_NAME} = require('../config/envConfig.js');
+const {CLOUDINARY_FOLDER_NAME, PROFILE_COUNT_LIMIT} = require('../config/envConfig.js');
 
 
 
@@ -69,6 +69,17 @@ const uploadProfilePic = async (req, res) => {
 
     try {
 
+        const currUser = await User.findById(userId);
+
+        if(currUser?.proflePicCount >= PROFILE_COUNT_LIMIT) {
+            res.status(400).json({
+                success : false,
+                message : "profile count limit exceeded",
+            });
+            return;
+        }
+
+
         // upload the image to the cloudinary first
         const uploadedImage = await cloudinary.uploader.upload(image, {
             folder : CLOUDINARY_FOLDER_NAME,
@@ -76,7 +87,10 @@ const uploadProfilePic = async (req, res) => {
 
         // save the url to the mongodb db
         const updatedUser = await User.findByIdAndUpdate({_id : userId}, 
-            {profilePic : uploadedImage.secure_url}, 
+            {
+                profilePic : uploadedImage.secure_url,
+                $inc : {proflePicCount : 1}
+            }, 
             {new : true}
         );
 

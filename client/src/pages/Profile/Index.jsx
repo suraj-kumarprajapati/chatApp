@@ -4,6 +4,8 @@ import { useState } from "react";
 import {uploadProfilePic} from "../../apiCalls/users.js";
 import { setUser } from "../../redux/userSlice.js";
 import toast from 'react-hot-toast';
+import { logout } from "../../apiCalls/auth.js";
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -12,6 +14,7 @@ const Profile = () => {
     const {user} = useSelector(state => state.userReducer);
     const [profileImage, setProfileImage] = useState(user?.profilePic || '');
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
 
     
@@ -62,6 +65,26 @@ const Profile = () => {
         }
     }
 
+
+
+    const handleLogout = async () => {
+        try {
+            const response = await logout();
+
+            if(response.success) {
+                toast.success(response.message);
+                navigate("/login");
+            }
+            else {
+                toast.error(response.message);
+            }
+        }
+        catch(error) {
+            toast.error(error.message);
+        }
+    }
+
+
     return (
         <>
             <div className="profile-page-container">
@@ -94,10 +117,15 @@ const Profile = () => {
                     </div>
                     <div className="select-profile-pic-container"   onChange={ handleImageUpload }>
                         <input type="file" />
+                        <button onClick={uplaodProfile} style={{}} >
+                            Upload Profile 
+                        </button>
                     </div>
+                    
+                    {/* logout functionality  */}
                     <div>
-                        <button onClick={uplaodProfile}>
-                            Upload
+                        <button onClick={handleLogout}>
+                            Logout 
                         </button>
                     </div>
                 </div>

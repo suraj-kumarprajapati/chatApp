@@ -130,11 +130,25 @@ const login = async (req, res) => {
 
 
 // also add logout method
+const logout = async (req, res) => {
 
+    const options = {
+        httpOnly : true,
+        expires : new Date(Date.now())
+    }
+
+    res.cookie("jwtToken", null, options);
+
+    res.status(200).json({
+        success : true,
+        message : "Logout Successfull",
+    });
+}
 
 
 
 module.exports = {
     register,
     login,
+    logout,
 }

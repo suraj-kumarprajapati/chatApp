@@ -19,6 +19,7 @@ const Chat = ({ socket }) => {
     const [allMessages, setAllMessages] = useState([]);
     const [isTyping, setIsTyping] = useState(false);    
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+    const [currentInputImage, setCurrentInputImage] = useState('');
 
     // returns the full name of the user
     const getFullName = (u) => {
@@ -49,7 +50,8 @@ const Chat = ({ socket }) => {
         const message = {
             chatId: selectedChat._id,
             sender: currentUser._id,
-            text: messageText
+            text: messageText,
+            image : currentInputImage,
         }
 
         try {
@@ -75,6 +77,9 @@ const Chat = ({ socket }) => {
         catch (error) {
             toast.error(error.message);
         }
+
+        // set the image property empty again
+        setCurrentInputImage('');
     }
 
 
@@ -203,7 +208,7 @@ const Chat = ({ socket }) => {
     }, [allMessages, selectedChat]);
 
 
-    // listen to new selected chat even
+    // listen to new selected chat 
     useEffect( () => {
 
         // get all messages
@@ -246,6 +251,26 @@ const Chat = ({ socket }) => {
     };
 
 
+    // handle input image
+    const handleInputImage = (e) => {
+        const file = e.target.files[0];
+
+        // if no file found
+        if(!file) return;
+
+        const reader = new FileReader();
+
+        reader.onloadend = async () => {
+            setCurrentInputImage(reader.result);
+            toast.success("image selected");
+        }
+
+        reader.readAsDataURL(file);
+
+
+    }
+
+
 
     return (
         <>
@@ -275,11 +300,36 @@ const Chat = ({ socket }) => {
                                             style={{ justifyContent: isSender ? "end" : "start" }}
                                         >
                                             <div>
-                                                <div
-                                                    className={isSender ? "send-message" : "received-message"}
-                                                >
-                                                    {msg.text}
-                                                </div>
+                                                {/* show message text  */}
+                                                {
+                                                    msg.text && 
+                                                    <div
+                                                        className={isSender ? "send-message" : "received-message"}
+                                                    >
+                                                        {msg.text}
+                                                    </div>
+                                                }
+
+                                                {/* show message image  */}
+                                                
+                                                {
+                                                    msg?.image && 
+                                                    <div
+                                                        className={isSender ? "send-message" : "received-message"}
+                                                    >
+                                                        <img 
+                                                            src={msg.image} 
+                                                            alt="image" 
+                                                            height="120px" 
+                                                            width="150px"> 
+                                                        </img>
+                                                    </div>
+                                                }
+                                                
+
+
+
+                                                
 
 
 
@@ -309,12 +359,12 @@ const Chat = ({ socket }) => {
                         {/* emoji picker  */}
                         {
                             showEmojiPicker && 
-                            <EmojiPicker  onEmojiClick={(e) => {
-                                console.log(e.emoji);
-                                setMessageText(messageText + e.emoji);
-                            }}/> 
-
                             
+                                <EmojiPicker className="emoji-picker-style" onEmojiClick={(e) => {
+                                    setMessageText(messageText + e.emoji);
+                                }}/>
+                           
+
                         }
 
 
@@ -347,6 +397,22 @@ const Chat = ({ socket }) => {
                                 }
                             />
 
+                                
+                            {/* controls the file picker  */}
+                            <label className="fa-solid fa-image  send-image-button"  htmlFor="file-picker">
+                            </label>
+
+                            {/* input for file picker  */}
+                            <input  
+                                type="file"  
+                                style={{display : "none"}}  
+                                id="file-picker"  
+                                accept="image/jpg, image/png, image/jpeg, image/gif" 
+                                onChange={handleInputImage}
+                            />
+
+
+
                             {/* controls emoji picker area  */}
                             <button className="fa-solid fa-face-smile emoji-button" onClick={() => setShowEmojiPicker(prev => !prev) }> 
                             </button>
@@ -367,6 +433,8 @@ const Chat = ({ socket }) => {
                                 }
                             >
                             </button>
+
+
                         </div>
                     </div>
                 )

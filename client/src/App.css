@@ -460,6 +460,24 @@ i{
     margin-top:5px;
 }
 
+.send-image-button {
+  position: absolute;
+    right: 90px;
+    font-size: 25px;
+    color: #e74c3c;
+    cursor: pointer;
+    border : none;
+    background-color: transparent;
+    margin-top:5px;
+}
+
+
+.emoji-picker-style {
+  width : 200px;
+  height : 300px;
+
+}
+
 
 /*****************************************************
 ***********CUSTOM SCROLLBAR FOR CHATAREA**************
