@@ -1,8 +1,10 @@
 
 const express = require('express');
 const dotenv = require('dotenv');
+const {FRONTEND_URL} = require('./config/envConfig.js');
 dotenv.config();
 const cookieParser = require('cookie-parser');
+
 
 
 const {PORT} = require('./config/envConfig.js');
@@ -32,7 +34,7 @@ app.use(cookieParser());
 const server = require('http').createServer(app);
 const io = require('socket.io')(server, {
     cors : {
-        origin : 'http://localhost:5173',
+        origin : FRONTEND_URL || 'http://localhost:5173',
         methods : ['GET', 'POST', 'PUT', 'DELETE']
     }
 })
