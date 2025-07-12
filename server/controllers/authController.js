@@ -108,6 +108,8 @@ const login = async (req, res) => {
         const options = {
             expires : new Date(Date.now() + (Number(JWT_AUTH_EXPIRE_DAYS)*24*60*60*1000)),
             httpOnly : true,
+            secure : true,
+            sameSite : None
         }
 
         res.cookie("jwtToken", jwtToken, options);
@@ -134,7 +136,9 @@ const logout = async (req, res) => {
 
     const options = {
         httpOnly : true,
-        expires : new Date(Date.now())
+        expires : new Date(Date.now()),
+        secure : true,
+        sameSite : None
     }
 
     res.cookie("jwtToken", null, options);

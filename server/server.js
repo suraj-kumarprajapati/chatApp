@@ -23,7 +23,7 @@ const app = express();
 
 // middlewares
 app.use(cors({
-    origin : FRONTEND_URL || 'http://localhost:5173',
+    origin : FRONTEND_URL ,
     credentials: true,
 }));
 
