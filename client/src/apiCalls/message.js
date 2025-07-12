@@ -6,7 +6,7 @@ import { url, axiosInstance } from ".";
 // send message
 export const createNewMessage =  async (message) => {
     try {
-        const response = await axiosInstance.post(url + "api/messages/newMessage", message);
+        const response = await axiosInstance.post(url + "/api/messages/newMessage", message);
         return response.data;
     }
     catch(error) {
@@ -17,7 +17,7 @@ export const createNewMessage =  async (message) => {
 // fetch all messages
 export const fetchAllMessages =  async (chatId) => {
     try {
-        const response = await axiosInstance.get(url + `api/messages/allMessages/${chatId}`);
+        const response = await axiosInstance.get(url + `/api/messages/allMessages/${chatId}`);
         return response.data;
     }
     catch(error) {
