@@ -1,10 +1,10 @@
 
 
-import { axiosInstance } from ".";
+import {url, axiosInstance } from ".";
 
 export const signupUser = async (user) => {
     try {
-        const response = await axiosInstance.post("/api/auth/signup", user);
+        const response = await axiosInstance.post(url + "/api/auth/signup", user);
         return response.data;
     }
     catch(error) {
@@ -15,7 +15,7 @@ export const signupUser = async (user) => {
 
 export const loginUser = async (user) => {
     try {
-        const response = await axiosInstance.post("/api/auth/login", user);
+        const response = await axiosInstance.post(url + "/api/auth/login", user);
         return response.data;
     }
     catch(error) {
@@ -25,7 +25,7 @@ export const loginUser = async (user) => {
 
 export const checkLoginStatus = async () => {
     try {
-        const response = await axiosInstance.post("/api/auth/loginStatus");
+        const response = await axiosInstance.post(url + "/api/auth/loginStatus");
         const data = response.data;
 
         if(data.success) {
@@ -42,7 +42,7 @@ export const checkLoginStatus = async () => {
 
 export const logout = async () => {
     try {
-        const response = await axiosInstance.post("/api/auth/logout");
+        const response = await axiosInstance.post(url + "/api/auth/logout");
         return response.data;
     }
     catch (error) {

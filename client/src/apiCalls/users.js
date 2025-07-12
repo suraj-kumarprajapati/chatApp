@@ -1,13 +1,13 @@
 
 
-import { axiosInstance } from "."; 
+import { url, axiosInstance } from "."; 
 
 
 
 // get other users
 export const getAllUsers =  async () => {
     try {
-        const response = await axiosInstance.get("api/users/otherUsers");
+        const response = await axiosInstance.get(url + "api/users/otherUsers");
         return response.data;
     }
     catch(error) {
@@ -18,7 +18,7 @@ export const getAllUsers =  async () => {
 // get current logged in user details
 export const getCurrentUser =  async () => {
     try {
-        const response = await axiosInstance.get("api/users/userDetails");
+        const response = await axiosInstance.get(url + "api/users/userDetails");
         return response.data;
     }
     catch(error) {
@@ -30,7 +30,7 @@ export const getCurrentUser =  async () => {
 // upload profile pic
 export const uploadProfilePic =  async (image) => {
     try {
-        const response = await axiosInstance.post("api/users/upload-profile", {image});
+        const response = await axiosInstance.post(url + "api/users/upload-profile", {image});
         return response.data;
     }
     catch(error) {
