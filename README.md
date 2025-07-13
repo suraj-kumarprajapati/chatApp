@@ -18,7 +18,6 @@ Description: VibeChat is a real-time chat application built using MongoDB, Expre
 
 ## Technologies Used
 
-Technologies Used:
 
 - Frontend: React, Redux, Axios, react-hot-toast, emoji-picker-react, moment, socket.io client
 - Backend: Express, MongoDB, Mongoose, Socket.io, JWT, bcryptjs, Cloudinary
