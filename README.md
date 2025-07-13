@@ -28,4 +28,6 @@ Technologies Used:
 
 ## 🔗 Links
 
+For better experience, avoid phone screen and use desktop/laptop
+
 VibeChat : https://chatapp-client-n969.onrender.com
